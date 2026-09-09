@@ -1,6 +1,7 @@
-# Schefter Bot — The group chat has a news desk
+# Schefter Bot — archived launch-film source
 
-54 seconds. 30 fps. Master: 1080×1920. LinkedIn feed version: 1080×1350.
+This document describes the archived 54-second launch film. The public release
+now promotes a 25-second, silent trade-workflow demo instead.
 
 Reference: https://x.com/noahrshinn/status/2096307855372734963
 Reference presentation: one upright phone, legible Messages UI, conversational progression,
