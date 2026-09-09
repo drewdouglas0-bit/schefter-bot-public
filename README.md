@@ -8,10 +8,8 @@ waiver claims and trades into an iMessage group chat in a concise sports-news st
 It can also answer mention-gated questions inside that group through a local
 BlueBubbles webhook: `Schefter, what were the latest moves?`
 
-[![Watch the Schefter Bot trade demo](docs/demo-cover.jpg)](https://github.com/drewdouglas0-bit/schefter-bot-public/releases/download/v1.0.0/schefter-bot-linkedin-trade-v3-silent.mp4)
-
 [Watch / download the 25-second trade demo](https://github.com/drewdouglas0-bit/schefter-bot-public/releases/tag/v1.0.0)
-· [Rebuild the video](promo-video/README.md) · [Setup guide](SETUP.md)
+· [Setup guide](SETUP.md)
 
 The demo uses fictional league events and scripted conversations. Its waiver
 alert and trade acceptance are produced by the real bot code using fictional
