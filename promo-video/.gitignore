@@ -1,0 +1,6 @@
+node_modules/
+out/
+.bundle/
+.cache/
+public/audio/*.wav
+public/audio/*.m4a

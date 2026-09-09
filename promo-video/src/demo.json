@@ -1,0 +1,27 @@
+{
+  "disclosure": "Illustrative demo \u00b7 fictional league events",
+  "waiver": "Waiver claim: Jake's Rebuild gets RB Jaylen Warren (PIT) for $31 of FAAB.",
+  "drop": "Jake's Rebuild waived RB Jerome Ford (CLE), per the league transaction log.",
+  "recapFull": "\ud83d\udccb WEEK 1 FINAL\n\nSunday Scaries def. Jake's Rebuild, 128.4-96.2\n\nHigh scorer: Sunday Scaries (128.4)\nLow scorer: Jake's Rebuild (96.2)\nClosest call: Sunday Scaries / Jake's Rebuild decided by 32.2\nBiggest beatdown: 32.2 points\n\nJake's Rebuild left 42.7 points on the bench, including WR Chris Olave (NO) at 28.1, league records show.",
+  "recapExcerpt": "\ud83d\udccb WEEK 1 FINAL\n\nSunday Scaries def. Jake's Rebuild, 128.4-96.2\n\nHigh scorer: Sunday Scaries (128.4)\n\nJake's Rebuild left 42.7 points on the bench, including WR Chris Olave (NO) at 28.1, league records show.",
+  "matchups": {
+    "week": 1,
+    "matchups": [
+      {
+        "home": "Sunday Scaries",
+        "home_score": 128.4,
+        "away": "Jake's Rebuild",
+        "away_score": 96.2
+      }
+    ]
+  },
+  "scriptedAnswers": {
+    "drop": "Jake's Rebuild released RB Jerome Ford in a separate move, per ESPN.",
+    "matchup": "Sunday Scaries leads Jake's Rebuild, 128.4-96.2 in Week 1, per ESPN."
+  },
+  "provenance": {
+    "waiver": "schefter.formatter.format_activity, fictional fixture",
+    "recap": "schefter.features.recap.run, excerpt from fictional fixture",
+    "answers": "Scripted demo examples grounded in fixture; not live model output"
+  }
+}
