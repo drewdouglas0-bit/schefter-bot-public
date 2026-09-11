@@ -52,18 +52,13 @@ def recent_transactions(limit: int = 10) -> dict:
 
 
 def team_roster(team_name: str) -> dict:
-    league = espn.get_league()
-    needle = team_name.casefold().strip()
-    candidates = [
-        team for team in league.teams
-        if needle in str(_value(team, "team_name", "teamName", default="")).casefold()
-        or needle in str(_value(team, "owner", default="")).casefold()
-    ]
-    if not candidates:
-        return {"error": f"No team or owner matched {team_name!r}"}
-    if len(candidates) > 1:
-        return {"error": "More than one team matched", "matches": [_team(t) for t in candidates]}
-    team = candidates[0]
+    # One resolver for the whole app. This used to match on team.owner, which
+    # espn-api leaves as None, so an owner surname never resolved and a team
+    # name containing it matched the wrong team instead.
+    try:
+        team = trades._find_team(team_name)
+    except ValueError:
+        return {"error": f"No team or owner matched {team_name!r}, or several did"}
     players = []
     for player in getattr(team, "roster", []):
         players.append({
@@ -76,6 +71,29 @@ def team_roster(team_name: str) -> dict:
             "projected_points": _value(player, "projected_total_points", "projectedTotalPoints"),
         })
     return {"team": _team(team), "roster": players}
+
+
+def compare_rosters(other_team: str, actor: str | None = None) -> dict:
+    """Both rosters in one result, labelled by side.
+
+    Handed two separate roster payloads the model mixes them up and suggests a
+    manager trade for players they already own. Naming the sides "your_team"
+    and "their_team" in one response removes the chance to cross them.
+    """
+    mine = trades._manager_team(actor or "")
+    if not mine:
+        return {"error": "Your iMessage address is not mapped to a fantasy team"}
+    try:
+        my_team = trades._find_team(mine)
+        their_team = trades._find_team(other_team)
+    except ValueError as exc:
+        return {"error": str(exc)}
+    if trades._same_team(my_team, their_team):
+        return {"error": "That is your own team"}
+    return {
+        "your_team": team_roster(my_team.team_name),
+        "their_team": team_roster(their_team.team_name),
+    }
 
 
 def matchups(week: int | None = None) -> dict:
@@ -292,6 +310,22 @@ TOOLS = [
     },
     {
         "type": "function",
+        "name": "compare_rosters",
+        "description": (
+            "Both rosters side by side for trade talk: the asker's as your_team and the "
+            "other manager's as their_team. Use this instead of two get_team_roster calls "
+            "whenever a trade with a specific team is being weighed, so the sides stay straight."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {"other_team": {"type": "string"}},
+            "required": ["other_team"],
+            "additionalProperties": False,
+        },
+        "strict": True,
+    },
+    {
+        "type": "function",
         "name": "get_team_roster",
         "description": "Get a fantasy team's current roster by team name or owner name.",
         "parameters": {
@@ -344,6 +378,7 @@ def call(name: str, arguments: dict, actor: str | None = None):
         "get_league_overview": lambda: league_overview(),
         "get_recent_transactions": lambda: recent_transactions(arguments["limit"]),
         "get_team_roster": lambda: team_roster(arguments["team_name"]),
+        "compare_rosters": lambda: compare_rosters(arguments["other_team"], actor=actor),
         "get_matchups": lambda: matchups(arguments.get("week")),
         "create_trade_proposal": lambda: trades.create(
             actor or "", arguments["target_team"], arguments["offered_players"], arguments["requested_players"]

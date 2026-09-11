@@ -13,7 +13,7 @@ from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-from . import agent, agent_state, config, imessage, moderation, polls, trades
+from . import agent, agent_state, config, guardrails, imessage, moderation, polls, trades
 
 
 def log(message: str) -> None:
@@ -176,15 +176,11 @@ def process(payload: dict) -> str:
 
     if moderation.contains_slur(message.text):
         imessage.send(moderation.DECLINE_MESSAGE, message.chat_id)
-        agent_state.append_exchange(
-            message.chat_id, message.sender, question, moderation.DECLINE_MESSAGE
-        )
         log(f"Declined message from {message.sender} (slur filter)")  # content never logged
         return "declined-slur"
 
     if message.has_image:
         imessage.send(IMAGE_DECLINE_MESSAGE, message.chat_id)
-        agent_state.append_exchange(message.chat_id, message.sender, question, IMAGE_DECLINE_MESSAGE)
         log(f"Declined image from {message.sender}")
         return "declined-image"
 
@@ -195,7 +191,10 @@ def process(payload: dict) -> str:
         log(f"ERROR answering: {exc}")
         reply = "I hit a snag pulling that report. The front office has been notified. Try me again in a minute."
     imessage.send(reply, message.chat_id)
-    agent_state.append_exchange(message.chat_id, message.sender, question, reply)
+    # A refusal in the history teaches the model to refuse the next question,
+    # so only real answers become context.
+    if not guardrails.is_refusal(reply):
+        agent_state.append_exchange(message.chat_id, message.sender, question, reply)
     log(f"Replied to {message.sender}")
     return "replied"
 

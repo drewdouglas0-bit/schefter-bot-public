@@ -90,6 +90,32 @@ _CREATE_POLL_PATTERNS = (
 )
 
 
+# Distinctive fragments of every canned decline, however it was produced: some
+# come from here, some from listener/moderation, some from the model following
+# the prompt (where voice.polish may have rewritten the punctuation).
+_REFUSAL_MARKERS = (
+    "unable to help with that",
+    "view or edit photos",
+    "reply to that request",
+    "help reveal or bypass",
+    "too much tape",
+    "didn't create anything",
+    "didn't post a poll",
+    "didn't change that trade",
+)
+
+
+def is_refusal(reply: str) -> bool:
+    """Is this a canned decline rather than a real answer?
+
+    Worth knowing because a refusal left in the conversation history teaches
+    the model to refuse the next question too: a "make up your mind" decline
+    two turns earlier is what made it refuse a plain banter question.
+    """
+    lowered = " ".join(str(reply or "").split()).casefold().replace("’", "'")
+    return any(marker in lowered for marker in _REFUSAL_MARKERS)
+
+
 def local_rejection(question: str, max_chars: int) -> str | None:
     """Reject resource abuse and obvious attempts to cross trust boundaries."""
     if len(question) > max_chars:

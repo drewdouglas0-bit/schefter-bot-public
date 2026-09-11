@@ -10,6 +10,15 @@
     "stills": "node scripts/render.mjs stills",
     "render": "node scripts/render.mjs video",
     "render:feed": "node scripts/render.mjs feed",
+    "audio:clean": "node scripts/compose-chat-audio.mjs",
+    "stills:clean": "node scripts/render.mjs clean-stills",
+    "render:clean": "node scripts/render.mjs clean-video",
+    "render:clean:feed": "node scripts/render.mjs clean-feed",
+    "fixtures:trade": "python3 scripts/build-trade-fixture.py",
+    "audio:trade": "node scripts/compose-imessage-audio.mjs",
+    "stills:trade": "node scripts/render.mjs trade-stills",
+    "render:trade": "node scripts/render.mjs trade-video",
+    "render:trade:feed": "node scripts/render.mjs trade-feed",
     "studio": "remotion studio src/index.ts"
   },
   "dependencies": {

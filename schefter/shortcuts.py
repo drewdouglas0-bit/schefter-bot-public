@@ -10,7 +10,7 @@ than a right expensive one.
 """
 import re
 
-from . import draft, espn, history, voice
+from . import draft, espn, history, trades, voice
 
 _ALL_TIME = r"(?:all[-\s]?time|ever|of all time|in league history)"
 
@@ -197,11 +197,71 @@ def _standings_now() -> str | None:
     return "\n".join(lines)
 
 
-def answer(question: str) -> str | None:
+# "offer taylor puka for cmc", "propose Team Two Puka Nacua for McCaffrey".
+_OFFER = re.compile(
+    r"^\s*(?:please\s+)?(?:offer|propose)\s+(?P<left>.+?)\s+for\s+(?P<right>.+?)\s*[.!]?\s*$",
+    re.IGNORECASE,
+)
+
+
+def _trade(question: str, actor: str | None) -> str | None:
+    """Create a trade straight from the message text.
+
+    The model's argument extraction for this is unreliable: across repeated
+    runs of one sentence it put the wanted player in the team slot, the
+    recipient in the player list, and once the asker's own team as the
+    counterparty. The phrasing is regular, so parse it here and let
+    trades.create resolve the names it already knows how to resolve.
+    """
+    if not actor:
+        return None
+    match = _OFFER.match(" ".join(str(question).split()))
+    if not match:
+        return None
+
+    left = match.group("left").strip()
+    requested = [part.strip() for part in re.split(r",| and ", match.group("right")) if part.strip()]
+    if not requested:
+        return None
+
+    mine = trades._manager_team(actor)
+    if not mine:
+        return None
+    try:
+        source = trades._find_team(mine)
+    except ValueError:
+        return None
+
+    # A leading recipient is optional: "offer taylor puka ..." names one,
+    # "offer puka ..." does not. Only treat the first word as the recipient
+    # when it identifies another team and is not itself one of my players.
+    recipient, offered_text = "", left
+    words = left.split()
+    if len(words) >= 2 and trades._match_player(getattr(source, "roster", []), words[0]) is None:
+        try:
+            candidate = trades._find_team(words[0])
+            if not trades._same_team(candidate, source):
+                recipient, offered_text = words[0], " ".join(words[1:])
+        except ValueError:
+            pass
+
+    offered = [part.strip() for part in re.split(r",| and ", offered_text) if part.strip()]
+    if not offered:
+        return None
+
+    result = trades.create(actor, recipient, offered, requested)
+    return result.get("message") or result.get("error")
+
+
+def answer(question: str, actor: str | None = None) -> str | None:
     """A ready reply for a recognized question, or None to let the model handle it."""
     text = " ".join(str(question).split())
     if not text:
         return None
+
+    trade = _trade(text, actor)
+    if trade:
+        return voice.polish(trade)
 
     if _CHAMPION_LAST.match(text):
         return voice.polish(_champion(None) or "") or None

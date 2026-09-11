@@ -1,0 +1,103 @@
+{
+  "fps": 30,
+  "durationInFrames": 750,
+  "time": "9:41",
+  "date": "Wednesday 9:41 AM",
+  "messages": [
+    {
+      "at": 9,
+      "who": "Jake",
+      "lines": [
+        "waivers are gonna be quiet"
+      ]
+    },
+    {
+      "at": 42,
+      "who": "Schefter Bot",
+      "lines": [
+        "Waiver claim: Jake's Rebuild gets",
+        "RB Jaylen Warren (PIT) for $31",
+        "of FAAB."
+      ]
+    },
+    {
+      "at": 130,
+      "who": "Drew",
+      "lines": [
+        "$31????"
+      ]
+    },
+    {
+      "at": 170,
+      "who": "Maya",
+      "lines": [
+        "Schefter, offer Jake's Rebuild",
+        "Chris Olave for Jaylen Warren."
+      ]
+    },
+    {
+      "at": 258,
+      "who": "Schefter Bot",
+      "lines": [
+        "Trade 7a31c908:",
+        "Maya sends Chris Olave.",
+        "Jake sends Jaylen Warren.",
+        "Jake, reply Yes to accept."
+      ]
+    },
+    {
+      "at": 405,
+      "who": "Jake",
+      "lines": [
+        "Yes"
+      ]
+    },
+    {
+      "at": 441,
+      "who": "Schefter Bot",
+      "lines": [
+        "Trade 7a31c908 accepted. The",
+        "provider submission was sent."
+      ]
+    },
+    {
+      "at": 555,
+      "who": "Drew",
+      "lines": [
+        "he spent $31 just to trade him"
+      ]
+    },
+    {
+      "at": 638,
+      "who": "Jake",
+      "lines": [
+        "value investing"
+      ]
+    }
+  ],
+  "disclosure": "Fictional group-chat demo of an unofficial bot, not Adam Schefter. ESPN HTTP responses mocked; no live trade or message sent.",
+  "verification": {
+    "proposalId": "7a31c908",
+    "proposalStatus": "accepted",
+    "execution": {
+      "status": "submitted",
+      "provider": "espn",
+      "transaction_id": "demo-transaction-001"
+    },
+    "providerCalls": [
+      "TRADE_PROPOSAL",
+      "TRADE_ACCEPT"
+    ],
+    "unauthorizedAcceptanceBlocked": true,
+    "duplicateAcceptanceBlocked": true,
+    "acceptanceReply": "Trade 7a31c908 accepted. The provider submission was sent.",
+    "waiverReply": "Waiver claim: Jake's Rebuild gets RB Jaylen Warren (PIT) for $31 of FAAB."
+  },
+  "provenance": {
+    "waiver": "Real schefter.formatter.format_activity output against a fictional activity.",
+    "trade": "Real trades.create -> trades.bare_response -> espn_trade.execute -> _post; only ESPN HTTP and league data mocked.",
+    "acceptance": "Verbatim bare_response output. Submitted does not assert final league processing or roster settlement.",
+    "offerSummary": "Scripted presentation of the verified proposal, not a captured LLM response.",
+    "humanMessages": "Scripted fictional dialogue. No real contacts, messages, cookies, or league IDs loaded."
+  }
+}
